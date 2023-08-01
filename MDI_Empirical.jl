@@ -172,13 +172,6 @@ for i in 1:length(participant_l5_max)
     annotate!(REC_scaled_plot, participant_l5_max[i].-participant_l5_min[i], REC[1,i] + 0.03, text(i, 8, :black))
 end
 
-# LDI_l5_plot
-# LDI_l5_scale_plot
-# REC_l5_plot
-# REC_l5_scale_plot
-# REC_max_plot
-# REC_scaled_plot
-
 # Save all the figures
 savefig(LDI_l5_plot, "MDI_Figures/LDI_l5_plot.png")
 savefig(LDI_l5_scale_plot, "MDI_Figures/LDI_l5_scale_plot.png")
