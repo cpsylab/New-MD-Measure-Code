@@ -84,8 +84,8 @@ for i in 1:21 # for each participant
 
 
     # Get max, calculate area between max line and l5 curve
-    participant_l5_max[i] = maximum(logistic5(range(0, stop=maximum(lureBin), length=500), curve_fit_params[i,:]))
-    participant_l5_min[i] = minimum(logistic5(range(0, stop=maximum(lureBin), length=500), curve_fit_params[i,:]))
+    participant_l5_max[i] = logistic5(maximum(lureBin), curve_fit_params[i,:])
+    participant_l5_min[i] = logistic5(0, curve_fit_params[i,:])
     area_diff(x) = participant_l5_max[i] - logistic5(x, curve_fit_params[i,:])
     participant_auc_l5[i], = quadgk(area_diff, 0, maximum(lureBin))
     participant_auc_l5_scale[i] = participant_auc_l5[i]/(participant_l5_max[i]-participant_l5_min[i])
@@ -110,7 +110,7 @@ LDI_l5_plot = scatter(participant_auc_l5, LDI[1,:];
                         legend = false,
                         xlabel = "Area",
                         ylabel = "LDI",
-                        xlim = (0,1),
+                        xlim = (-0.1,1),
                         ylim = (-0.1,1),
                         dpi=300)
 for i in 1:length(participant_auc_l5)
@@ -121,7 +121,7 @@ REC_l5_plot = scatter(participant_auc_l5, REC[1,:];
                         legend = false,
                         xlabel = "Area",
                         ylabel = "REC",
-                        xlim = (0,1),
+                        xlim = (-0.1,1),
                         ylim = (-0.1,1),
                         dpi=300)
 for i in 1:length(participant_auc_l5)
@@ -132,7 +132,7 @@ LDI_l5_scale_plot = scatter(participant_auc_l5_scale, LDI[1,:];
                              legend = false,
                              xlabel = "Scaled Area",
                              ylabel = "LDI",
-                             xlim = (0,1),
+                             xlim = (-0.1,1),
                              ylim = (-0.1,1),
                              dpi=300)
 for i in 1:length(participant_auc_l5_scale)
@@ -143,7 +143,7 @@ REC_l5_scale_plot = scatter(participant_auc_l5_scale, REC[1,:];
                              legend = false,
                              xlabel = "Scaled Area",
                              ylabel = "REC",
-                             xlim = (0,1),
+                             xlim = (-0.1,1),
                              ylim = (-0.1,1),
                              dpi=300)
 for i in 1:length(participant_auc_l5_scale)
@@ -154,7 +154,7 @@ REC_max_plot = scatter(participant_l5_max, REC[1,:];
                         legend = false,
                         xlabel = "Curve Maximum",
                         ylabel = "REC",
-                        xlim = (0,1),
+                        xlim = (-0.1,1),
                         ylim = (-0.1,1),
                         dpi=300)
 for i in 1:length(participant_l5_max)
@@ -165,7 +165,7 @@ REC_scaled_plot = scatter(participant_l5_max .- participant_l5_min, REC[1,:];
                             legend = false,
                             xlabel = "Curve Maximum - Curve Minimum",
                             ylabel = "REC",
-                            xlim = (0,1),
+                            xlim = (-0.1,1),
                             ylim = (-0.1,1),
                             dpi=300)
 for i in 1:length(participant_l5_max)
