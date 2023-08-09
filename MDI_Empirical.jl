@@ -1,4 +1,8 @@
-using QuadGK,MAT, StatsBase, Plots, DataFrames, Distributions, Random, Statistics, StatsKit, GLM, HypothesisTests, StatsPlots, MixedModels, LsqFit
+using DataFrames
+using MAT
+using StatsPlots
+
+include("MDI.jl")
 
 function read_mat_file(file_path)
     file = matopen(file_path)
@@ -12,31 +16,6 @@ function read_mat_file(file_path)
     close(file)
 
     return data
-end
-
-# This is the function that we will try to fit
-@. logistic5(data,params) = params[4]+(params[1]-params[4])/((1+(data/params[3])^params[2])^params[5])
-
-# Randomly initialize the initial parameters to help prevent non-convergence
-function p_init()
-    a = rand(Uniform(0, 0.1))
-    b = rand(Uniform(1, 10))
-    c = rand(Uniform(0.1, 0.7))
-    d = rand(Uniform(0.9, 1))
-    e = rand(Uniform(0.5, 1.5))
-    return [a, b, c, d, e]
-end
-
-# Tries to fit the function until it succeeds
-function fit_function(data_x, data_y; model=logistic5, lower=[0.,0,0,0,0], upper=[1.,20,1,1,10], kwargs...)
-    # Try again with different initial parameter values until curve_fit returns
-    while true
-        try
-            return curve_fit(model,data_x,data_y, p_init(); lower, upper, kwargs...)
-        catch
-            continue
-        end
-    end
 end
 
 # https://github.com/mdlee/mpt4mst/tree/main/data
@@ -82,16 +61,17 @@ for i in 1:21 # for each participant
     decision_metric = [Dict(1 => 0, 2 => 1, 3 => 1)[x] for x in decision[idx][cases_noNaN]]
 
     # Fit participant data to logistic5 curve
-    fit_logistic5 = fit_function(lureBin[idx][cases_noNaN], decision_metric)
+    fit_logistic5 = fit_model(lureBin[idx][cases_noNaN], decision_metric)
     curve_fit_params[i,:] = fit_logistic5.param
 
 
     # Get max, calculate area between max line and l5 curve
-    participant_l5_max[i] = logistic5(maximum(lureBin), curve_fit_params[i,:])
-    participant_l5_min[i] = logistic5(0, curve_fit_params[i,:])
-    area_diff(x) = participant_l5_max[i] - logistic5(x, curve_fit_params[i,:])
-    participant_auc_l5[i], = quadgk(area_diff, 0, maximum(lureBin))
-    participant_auc_l5_scale[i] = participant_auc_l5[i]/(participant_l5_max[i]-participant_l5_min[i])
+    # participant_l5_max[i] = logistic5(maximum(lureBin), curve_fit_params[i,:])
+    # participant_l5_min[i] = logistic5(0, curve_fit_params[i,:])
+    # area_diff(x) = participant_l5_max[i] - logistic5(x, curve_fit_params[i,:])
+    # participant_auc_l5[i], = quadgk(area_diff, 0, maximum(lureBin))
+    # participant_auc_l5_scale[i] = participant_auc_l5[i]/(participant_l5_max[i]-participant_l5_min[i])
+    participant_auc_l5[i], participant_auc_l5_scale[i], participant_l5_min[i], participant_l5_max[i] = get_aucs(curve_fit_params[i,:])
 
 
     # Plotting
