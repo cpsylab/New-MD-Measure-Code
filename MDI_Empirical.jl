@@ -63,10 +63,13 @@ lureBin .= scale(lureBin)
 
 curve_fit_params = Matrix(undef, 21, 5)
 participant_plot = Vector(undef, 21)
+participant_barplot = Vector(undef, 21)
+participant_pairplot = Vector(undef, 21)
 participant_auc_l5 = Vector(undef, 21)
 participant_auc_l5_scale = Vector(undef, 21)
 participant_l5_max = Vector(undef, 21)
 participant_l5_min = Vector(undef, 21)
+
 
 for i in 1:21 # for each participant
 
@@ -104,7 +107,38 @@ for i in 1:21 # for each participant
             )
 
     hline!(participant_plot[i], [participant_l5_max[i]], linestyle=:dash, color=:red, label="Max")
+
+    unique_lureBins = unique(lureBin[idx])
+    stacked_data = zeros(Float64, length(unique_lureBins), 4) # Including an extra column for NaNs
+
+    for j in 1:length(unique_lureBins)
+        bin = unique_lureBins[j]
+        for decision_value in 1:3
+            for k in idx
+                if lureBin[k] == bin
+                    if decision[k] == decision_value
+                        stacked_data[j, decision_value] += 1
+                    elseif isnan(decision[k])
+                        stacked_data[j, 4] += 1 # Counting NaNs in the fourth column
+                    end
+                end
+            end
+        end
+    end
+    participant_barplot[i] = groupedbar(unique_lureBins, stacked_data,bar_position = :stack, bar_width=0.1, labels=["Old" "New" "Similar" "NaN"], xlabel="Lure Bin", ylabel="Count", title="Participant #$(string(i))", legend = :outertopright)
+
+    stacked_pairs = zeros(Int64, 3,3)
+    for j in 1:length(truth[idx][cases_noNaN])
+        stacked_pairs[Int(truth[idx][cases_noNaN][j]), Int(decision[idx][cases_noNaN][j])] += 1
+    end
+
+    participant_pairplot[i] = heatmap(stacked_pairs', xlabel = "Truth", ylabel = "Decision", xticks = ([1:1:3;],["Old", "New", "Similar"]), yticks = ([1:1:3;],["Old", "New", "Similar"]))
 end
+
+participant_barplot[11]
+participant_plot[15]
+participant_pairplot[15] # I think this doesnt work properly
+
 
 LDI_l5_plot = scatter(participant_auc_l5, LDI[1,:];
                         legend = false,
@@ -171,7 +205,7 @@ REC_scaled_plot = scatter(participant_l5_max .- participant_l5_min, REC[1,:];
 for i in 1:length(participant_l5_max)
     annotate!(REC_scaled_plot, participant_l5_max[i].-participant_l5_min[i], REC[1,i] + 0.03, text(i, 8, :black))
 end
-
+#=
 # Save all the figures
 savefig(LDI_l5_plot, "MDI_Figures/LDI_l5_plot.png")
 savefig(LDI_l5_scale_plot, "MDI_Figures/LDI_l5_scale_plot.png")
@@ -184,5 +218,10 @@ savefig(REC_scaled_plot, "MDI_Figures/REC_scaled_plot.png")
 for i in eachindex(participant_plot)
     savefig(participant_plot[i], "MDI_Figures/participant_plot_$i.png")
 end
+=#
+participant_plot[4]
 
-participant_plot[2]
+participant_barplot[4]
+
+
+LDI_l5_scale_plot
