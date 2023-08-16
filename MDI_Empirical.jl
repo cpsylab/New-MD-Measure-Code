@@ -1,6 +1,7 @@
 using DataFrames
 using MAT
 using StatsPlots
+using CSV
 
 include("MDI.jl")
 
@@ -49,6 +50,7 @@ participant_auc_l5_scale = Vector(undef, 21)
 participant_l5_max = Vector(undef, 21)
 participant_l5_min = Vector(undef, 21)
 
+seed = 1234
 
 for i in 1:21 # for each participant
 
@@ -61,7 +63,7 @@ for i in 1:21 # for each participant
     decision_metric = [Dict(1 => 0, 2 => 1, 3 => 1)[x] for x in decision[idx][cases_noNaN]]
 
     # Fit participant data to logistic5 curve
-    fit_logistic5 = fit_model(lureBin[idx][cases_noNaN], decision_metric)
+    fit_logistic5 = fit_model(lureBin[idx][cases_noNaN], decision_metric, seed = seed)
     curve_fit_params[i,:] = fit_logistic5.param
 
 
@@ -119,6 +121,14 @@ participant_barplot[11]
 participant_plot[15]
 participant_pairplot[15] # I think this doesnt work properly
 
+df = DataFrame(participant_auc_l5 = participant_auc_l5,
+                participant_auc_l5_scale = participant_auc_l5_scale,
+                participant_l5_min = participant_l5_min,
+                participant_l5_max = participant_l5_max,
+                REC = REC[1,:],
+                LDI = LDI[1,:])
+
+#CSV.write("data_L5.csv", df)
 
 LDI_l5_plot = scatter(participant_auc_l5, LDI[1,:];
                         legend = false,
@@ -199,9 +209,9 @@ for i in eachindex(participant_plot)
     savefig(participant_plot[i], "MDI_Figures/participant_plot_$i.png")
 end
 =#
-participant_plot[4]
+participant_plot[1]
 
-participant_barplot[4]
-
+participant_barplot[1]
 
 LDI_l5_scale_plot
+
