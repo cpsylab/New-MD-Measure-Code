@@ -1,11 +1,10 @@
 using CSV
 using DataFrames
 using StatsPlots
-
-include("MDI.jl")
+using MDI
 
 # https://osf.io/v7cb4/
-df = DataFrame(CSV.File("Data/MST_MW.csv"))
+df = DataFrame(CSV.File("../Data/MST_MW.csv"))
 
 count = 0
 for i in 1:300

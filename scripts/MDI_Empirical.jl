@@ -2,8 +2,7 @@ using DataFrames
 using MAT
 using StatsPlots
 using CSV
-
-include("MDI.jl")
+using MDI
 
 function read_mat_file(file_path)
     file = matopen(file_path)
@@ -20,7 +19,7 @@ function read_mat_file(file_path)
 end
 
 # https://github.com/mdlee/mpt4mst/tree/main/data
-data = read_mat_file("Data/msttDataWithin.mat")["d"]
+data = read_mat_file("../Data/msttDataWithin.mat")["d"]
 
 truth = vec(data["truthOSN"]) # 1 = old 2 = new 3 = lure
 lureBin = vec(data["lureBinOSN"]) # low value = similar, high value = distinct
@@ -37,7 +36,7 @@ lureStim = truth .== 3
 lureBin[oldStim] .= 0
 lureBin[newStim] .= 6
 
-# Scale lureBin to be between 0 and 6
+# Scale lureBin to be between 0 and 1
 scale(data) = (data .- minimum(data)) ./ (maximum(data) - minimum(data))
 lureBin .= scale(lureBin)
 
