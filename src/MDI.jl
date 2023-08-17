@@ -1,3 +1,5 @@
+module MDI
+
 using Distributions
 using LsqFit
 using QuadGK
@@ -45,3 +47,8 @@ function get_aucs(params; domain=(0,1), model=logistic5)
     auc_scaled = auc/(max-min)
     return auc, auc_scaled, min, max
 end
+
+
+export logistic5, fit_model, get_aucs
+
+end # module MDI
