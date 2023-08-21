@@ -20,7 +20,7 @@ function p_init(rng)
 end
 
 # Tries to fit the function until it succeeds
-function fit_model(data_x, data_y; model=logistic5, lower=[0.,0,0,0,0], upper=[1.,20,1,1,10], seed::Union{Nothing,Int}=nothing, kwargs...)
+function fit_model(data_x, data_y; model=logistic5, lower=[0.,0,0,0,0], upper=[1.,Inf,1,1,Inf], seed::Union{Nothing,Int}=nothing, kwargs...)
     rng = isnothing(seed) ? Random.default_rng() : StableRNG(seed)
 
     # Try again with different initial parameter values until curve_fit returns
