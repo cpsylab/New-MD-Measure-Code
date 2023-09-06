@@ -7,7 +7,7 @@ data$participant_id <- 1:nrow(data)
 excluded_ids <- c(1, 15, 17)
 data <- data[!data$participant_id %in% excluded_ids, ]
 
-cor.test(data$participant_auc_l5, data$LDI)
+#cor.test(data$participant_auc_l5, data$LDI)
 
 cor.test(data$participant_auc_l5_scale, data$LDI)
 
