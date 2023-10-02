@@ -258,8 +258,8 @@ end
 for i in eachindex(participant_plot)
     savefig(participant_barplot[i], "MDI_Figures_fMRI/Bar_plots/participant_barplot_$i.png")
 end
-
 =#
+
 
 participant_plot[4]
 

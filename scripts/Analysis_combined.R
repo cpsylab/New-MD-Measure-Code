@@ -7,8 +7,8 @@ library(sjPlot)
 library(ggpubr)
 library(performance)
 
-data1 <- read_csv("data_L5.csv")
-data2 <- read_csv("data_L5_fMRI.csv")
+data1 <- read_csv("scripts/data_L5.csv")
+data2 <- read_csv("scripts/data_L5_fMRI.csv")
 
 data1 <- mutate(data1, l5_REC = participant_l5_max - participant_l5_min)
 data1$participant_id <- 1:nrow(data1)
@@ -19,7 +19,7 @@ data1 <- data1[!data1$participant_id %in% excluded_ids, ]
 data2 <- mutate(data2, l5_REC = participant_l5_max - participant_l5_min)
 data2$participant_id <- 1:nrow(data2)
 
-excluded_ids <- c(41,51,67,68,69,72)
+excluded_ids <- c(41,51,67,68,69)
 data2 <- data2[!data2$participant_id %in% excluded_ids, ]
 
 data1 <- data1 %>% mutate(study = 1)
@@ -36,6 +36,10 @@ rec_lm <- lm(data=data, scale(REC) ~ scale(lmdi) + scale(l5_REC))
 lmdi_lrec_m <- lmer(data = data, scale(lmdi) ~ scale(l5_REC) + (1|study))
 
 tab_model(rec_lm)
+tab_model(ldi_m)
+tab_model(rec_m)
+tab_model(ldi_rs_m)
+tab_model(lmdi_lrec_m)
 
 performance::icc(rec_m)
 
@@ -73,8 +77,8 @@ summary(lmdi_lrec_m)
 fig_ldi <- ggplot(data, aes(x=lmdi, y=LDI, group=study)) + 
   geom_point(aes(colour=factor(study)),show.legend = FALSE) + 
   geom_smooth(aes(colour=factor(study)), method="lm",show.legend = FALSE) + 
-  xlab("LMDI") + 
-  ylab("Original MST LDI") +
+  xlab("λ") + 
+  ylab("LDI") +
   scale_color_aaas(labels = c("Study 1", "Study 2")) + 
   theme_bw() + 
   labs(colour = "Study") +
@@ -97,8 +101,8 @@ fig_ldi
 fig_rec <- ggplot(data, aes(x=l5_REC, y=REC, group=study)) + 
   geom_point(aes(colour=factor(study)),show.legend = FALSE) + 
   geom_smooth(aes(colour=factor(study)), method="lm",show.legend = FALSE) + 
-  xlab("LREC") + 
-  ylab("Original MST REC") +
+  xlab("Δ") + 
+  ylab("REC") +
   scale_color_aaas(labels = c("Study 1", "Study 2")) + 
   theme_bw() + 
   labs(colour = "Study") + 
@@ -121,8 +125,8 @@ fig_rec <- ggplot(data, aes(x=l5_REC, y=REC, group=study)) +
 fig_ldi_rec <- ggplot(data, aes(x=lmdi, y=l5_REC, group=study)) + 
   geom_point(aes(colour=factor(study)),show.legend = FALSE) + 
   geom_smooth(aes(colour=factor(study)), method="lm",show.legend = FALSE) + 
-  xlab("LMDI") + 
-  ylab("LREC") +
+  xlab("λ") + 
+  ylab("Δ") +
   scale_color_aaas(labels = c("Study 1", "Study 2")) + 
   theme_bw() + 
   labs(colour = "Study") + 
@@ -145,7 +149,7 @@ fig_ldi_rec
 fig_ldi_oldrec <- ggplot(data, aes(x=lmdi, y=REC, group=study)) + 
   geom_point(aes(colour=factor(study))) + 
   geom_smooth(aes(colour=factor(study)), method="lm") + 
-  xlab("LMDI") + 
+  xlab("λ") + 
   ylab("REC") +
   scale_color_aaas(labels = c("Study 1", "Study 2")) + 
   theme_bw() + 
@@ -169,8 +173,8 @@ fig_ldi_oldrec
 fig_oldldi_rec <- ggplot(data, aes(x=LDI, y=l5_REC, group=study)) + 
   geom_point(aes(colour=factor(study)),show.legend = FALSE) + 
   geom_smooth(aes(colour=factor(study)), method="lm",show.legend = FALSE) + 
-  xlab("Original MST LDI") + 
-  ylab("LREC") +
+  xlab("LDI") + 
+  ylab("Δ") +
   scale_color_aaas(labels = c("Study 1", "Study 2")) + 
   theme_bw() + 
   labs(colour = "Study") + 
@@ -272,3 +276,4 @@ ggplot(data, aes(x = REC, y = LDI)) +
   scale_y_continuous(limits = c(0, 1)) +
   labs(x = "REC",
        y = "LDI")
+
