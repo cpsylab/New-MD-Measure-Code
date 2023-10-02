@@ -5,6 +5,7 @@ library(ggsci)
 library(lmerTest)
 library(sjPlot)
 library(ggpubr)
+library(performance)
 
 data1 <- read_csv("data_L5.csv")
 data2 <- read_csv("data_L5_fMRI.csv")
@@ -31,7 +32,34 @@ data <- mutate(data, lmdi = 1 - participant_auc_l5_scale)
 ldi_m <- lmer(data = data, scale(LDI) ~ scale(lmdi) + scale(l5_REC) + (1|study))
 ldi_rs_m <- lmer(data = data, LDI ~ lmdi + l5_REC + (1 + lmdi + l5_REC|study))
 rec_m <- lmer(data = data, scale(REC) ~ scale(lmdi) + scale(l5_REC) + (1|study))
+rec_lm <- lm(data=data, scale(REC) ~ scale(lmdi) + scale(l5_REC))
 lmdi_lrec_m <- lmer(data = data, scale(lmdi) ~ scale(l5_REC) + (1|study))
+
+tab_model(rec_lm)
+
+performance::icc(rec_m)
+
+performance::r2_(rec_m)
+
+vars <- insight::get_variance(
+  rec_m,
+  tolerance=1e-5,
+  name_fun = "r2()",
+  name_full = "r-squared",
+  verbose=T
+)
+
+vars_ldi <- insight::get_variance(
+  ldi_m,
+  tolerance=1e-5,
+  name_fun = "r2()",
+  name_full = "r-squared",
+  verbose=T
+)
+
+
+performance::r2_nakagawa(rec_m)
+
 
 tab_model(ldi_m)
 tab_model(rec_m)

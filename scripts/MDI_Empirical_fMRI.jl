@@ -35,7 +35,7 @@ unique(lureBin)
 
 # Recoding lurebin for old and new cases
 lureBin[oldStim] .= 0
-lureBin[newStim] .= 4
+lureBin[newStim] .= 6
 
 # Scale lureBin to be between 0 and 1
 scale(data) = (data .- minimum(data)) ./ (maximum(data) - minimum(data))
