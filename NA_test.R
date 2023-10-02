@@ -10,8 +10,15 @@ mst_fmri_test <- mst_fmri_test %>%
   mutate(Subject_ID = as.integer(Subject))
 
 
+num_missing <- mst_fmri_test %>%
+  group_by(Subject_ID) %>%
+  summarise(missing_count = sum(is.na(TestObj.RESP)))
+
+mean(num_missing$missing_count) + 2 * sd(num_missing$missing_count)
+
+x <- mean(num_missing$missing_count) + 2 * sd(num_missing$missing_count)
 # Threshold for number of missing values
-x <- 54 # 50%
+
 # Get a vector of subject IDs with more than x missing responses
 subjects_with_missing <- mst_fmri_test %>%
   group_by(Subject_ID) %>%

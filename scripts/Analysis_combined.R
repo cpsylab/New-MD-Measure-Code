@@ -201,6 +201,7 @@ combined_fig <- ggarrange(fig_ldi, fig_rec, fig_ldi_rec, fig_oldldi_rec,
 #dev.off()
 
 combined_fig
+
 #cor.test(data$participant_auc_l5, data$LDI)
 
 cor.test(data$lmdi, data$LDI)
