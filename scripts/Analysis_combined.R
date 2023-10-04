@@ -36,14 +36,16 @@ rec_lm <- lm(data=data, scale(REC) ~ scale(lmdi) + scale(l5_REC))
 lmdi_lrec_m <- lmer(data = data, scale(lmdi) ~ scale(l5_REC) + (1|study))
 
 tab_model(rec_lm)
-tab_model(ldi_m)
-tab_model(rec_m)
+tab_model(ldi_m, file = "LDI_table.doc")
+tab_model(rec_m,file = "REC_table.doc")
 tab_model(ldi_rs_m)
 tab_model(lmdi_lrec_m)
 
 performance::icc(rec_m)
 
 performance::r2_(rec_m)
+
+BIC(ldi_m)
 
 vars <- insight::get_variance(
   rec_m,

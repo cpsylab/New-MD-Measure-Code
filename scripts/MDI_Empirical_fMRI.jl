@@ -57,12 +57,18 @@ REC = Vector(undef, num_participants)
 decision_recoded = [get(Dict("v" => 1, "b" => 3, "n" => 2), x, x) for x in decision]
 
 #= diagnostics code
-i = 1
+i = 19
 idx = (108 * (i - 1)) + 1:(108 * i)
 decision[idx]
 cases_noNaN = decision[idx] .!== missing
 
 decision[idx][cases_noNaN]
+
+
+length(lure_decisions[truth[idx] .== "Foil"])
+
+unique_lureBins = unique(lureBin[idx])
+stacked_data = zeros(Float64, length(unique_lureBins), 4) # Including an extra column for NaNs
 
 lure_decisions = (decision[idx] .== "b") .& .!ismissing.(decision[idx])
 old_decisions = (decision[idx] .== "v") .& .!ismissing.(decision[idx])
@@ -75,8 +81,8 @@ p_old_foil = sum(old_decisions[truth[idx] .== "Foil"]) / length(old_decisions[tr
 
 p_lure_lure - p_lure_foil
 p_old_old - p_old_foil
-
 =#
+
 
 seed = 1234
 
@@ -135,14 +141,15 @@ for i in 1:num_participants # for each participant
 
     for j in 1:length(unique_lureBins)
         bin = unique_lureBins[j]
-        for decision_value in 1:3
-            for k in idx
-                if lureBin[k] == bin
+        for k in idx
+            if lureBin[k] == bin
+                for decision_value in 1:3
                     if decision_recoded[k] === decision_value
                         stacked_data[j, decision_value] += 1
-                    elseif decision_recoded[k] .=== missing
-                        stacked_data[j, 4] += 1 # Counting NaNs in the fourth column
                     end
+                end
+                if decision_recoded[k] .=== missing
+                    stacked_data[j, 4] += 1 # Counting NaNs in the fourth column
                 end
             end
         end
@@ -159,8 +166,8 @@ for i in 1:num_participants # for each participant
     =#
 end
 
-participant_plot[69]
-participant_barplot[1]
+participant_plot[72]
+participant_barplot[72]
 
 # participant_barplot[15]
 participant_plot[15]

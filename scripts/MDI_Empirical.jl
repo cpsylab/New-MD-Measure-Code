@@ -19,7 +19,7 @@ function read_mat_file(file_path)
 end
 
 # https://github.com/mdlee/mpt4mst/tree/main/data
-data = read_mat_file("../Data/msttDataWithin.mat")["d"]
+data = read_mat_file("./Data/msttDataWithin.mat")["d"]
 
 truth = vec(data["truthOSN"]) # 1 = old 2 = new 3 = lure
 lureBin = vec(data["lureBinOSN"]) # low value = similar, high value = distinct
@@ -51,6 +51,28 @@ participant_l5_min = Vector(undef, 21)
 
 seed = 1234
 
+#= Code below verifies the provided LDI and REC measures are correct
+i = 4
+idx = (192 * (i - 1)) + 1:(192 * i)
+decision[idx]
+cases_noNaN = .!isnan.(decision[idx])
+
+lure_decisions = (decision[idx] .== 3) .& .!ismissing.(decision[idx])
+old_decisions = (decision[idx] .== 1) .& .!ismissing.(decision[idx])
+
+p_lure_lure = sum(lure_decisions[truth[idx] .== 3]) / length(lure_decisions[truth[idx] .== 3])
+p_lure_foil = sum(lure_decisions[truth[idx] .== 2]) / length(lure_decisions[truth[idx] .== 2])
+
+p_old_old = sum(old_decisions[truth[idx] .== 1]) / length(old_decisions[truth[idx] .== 1])
+p_old_foil = sum(old_decisions[truth[idx] .== 2]) / length(old_decisions[truth[idx] .== 2])
+
+p_lure_lure - p_lure_foil
+LDI[4]
+
+p_old_old - p_old_foil
+REC[4]
+=#
+
 for i in 1:21 # for each participant
 
     idx = (192 * (i - 1)) + 1:(192 * i)
@@ -74,7 +96,6 @@ for i in 1:21 # for each participant
     # participant_auc_l5_scale[i] = participant_auc_l5[i]/(participant_l5_max[i]-participant_l5_min[i])
     participant_auc_l5[i], participant_auc_l5_scale[i], participant_l5_min[i], participant_l5_max[i] = get_aucs(curve_fit_params[i,:])
 
-
     # Plotting
     x_values = range(0, stop=maximum(lureBin), length=500)
     plot_values = logistic5(x_values, fit_logistic5.param)
@@ -94,14 +115,15 @@ for i in 1:21 # for each participant
 
     for j in 1:length(unique_lureBins)
         bin = unique_lureBins[j]
-        for decision_value in 1:3
-            for k in idx
-                if lureBin[k] == bin
+        for k in idx
+            if lureBin[k] == bin
+                for decision_value in 1:3
                     if decision[k] == decision_value
                         stacked_data[j, decision_value] += 1
-                    elseif isnan(decision[k])
-                        stacked_data[j, 4] += 1 # Counting NaNs in the fourth column
                     end
+                end
+                if isnan(decision[k])
+                    stacked_data[j, 4] += 1 # Counting NaNs in the fourth column
                 end
             end
         end
@@ -116,7 +138,7 @@ for i in 1:21 # for each participant
     participant_pairplot[i] = heatmap(stacked_pairs', xlabel = "Truth", ylabel = "Decision", xticks = ([1:1:3;],["Old", "New", "Similar"]), yticks = ([1:1:3;],["Old", "New", "Similar"]))
 end
 
-participant_barplot[11]
+participant_barplot[1]
 participant_plot[15]
 participant_pairplot[15] # I think this doesnt work properly
 
