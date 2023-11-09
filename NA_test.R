@@ -2,19 +2,12 @@ library(tidyverse)
 library(R.matlab)
 
 mst_fmri_test <- read_csv("Data/mst_fmri_test.csv")
-mst_fmri_age <- read_csv("Data/mst_icv.csv")
 mst_mat <- readMat("Data/msttDataWithin.mat")
 
-mst_mat <- as.data.frame(mst_mat)
-
-mst_mat <- mst_mat$X1.1
-
+mst_mat <- as.data.frame(mst_mat)$X1.1
 mst_mat_res <- mst_mat$decisionOSN[1,1:4032]
 subject_column <- rep(1:21, each = 192)
-
-
 mst_mat_dataframe <- data.frame(Subject = subject_column, decision = mst_mat_res)
-
 
 mst_fmri_test <- mst_fmri_test %>%
   mutate(Subject = factor(Subject)) %>%
