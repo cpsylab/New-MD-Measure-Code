@@ -3,7 +3,17 @@ library(R.matlab)
 
 mst_fmri_test <- read_csv("Data/mst_fmri_test.csv")
 mst_fmri_age <- read_csv("Data/mst_icv.csv")
-mst_MW <- readMat("Data/msttDataWithin.mat")
+mst_mat <- readMat("Data/msttDataWithin.mat")
+
+mst_mat <- as.data.frame(mst_mat)
+
+mst_mat <- mst_mat$X1.1
+
+mst_mat_res <- mst_mat$decisionOSN[1,1:4032]
+subject_column <- rep(1:21, each = 192)
+
+
+mst_mat_dataframe <- data.frame(Subject = subject_column, decision = mst_mat_res)
 
 
 mst_fmri_test <- mst_fmri_test %>%
@@ -15,7 +25,22 @@ num_missing <- mst_fmri_test %>%
   group_by(Subject) %>%
   summarise(missing_count = sum(is.na(TestObj.RESP)))
 
+num_missing_mat <- mst_mat_dataframe %>%
+  group_by(Subject) %>%
+  summarise(missing_count = sum(is.na(decision)))
+
+mean(num_missing_mat$missing_count) + 1 * sd(num_missing_mat$missing_count)
+
+(43 - mean(num_missing_mat$missing_count)) / sd(num_missing_mat$missing_count)
+
+ggplot(num_missing[order(num_missing$missing_count), ], aes(x = reorder(Subject, missing_count), y = missing_count)) +
+  geom_col()
+
 mean(num_missing$missing_count) + 2 * sd(num_missing$missing_count)
+
+(49 - mean(num_missing$missing_count)) / sd(num_missing$missing_count)
+
+mean(num_missing$missing_count) + sd(num_missing$missing_count)
 
 x <- mean(num_missing$missing_count) + 2 * sd(num_missing$missing_count)
 # Threshold for number of missing values

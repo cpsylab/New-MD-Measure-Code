@@ -13,13 +13,13 @@ data2 <- read_csv("scripts/data_L5_fMRI.csv")
 data1 <- mutate(data1, l5_REC = participant_l5_max - participant_l5_min)
 data1$participant_id <- 1:nrow(data1)
 
-excluded_ids <- c(1, 15, 17)
+excluded_ids <- c(1, 15, 16, 17)
 data1 <- data1[!data1$participant_id %in% excluded_ids, ]
 
 data2 <- mutate(data2, l5_REC = participant_l5_max - participant_l5_min)
 data2$participant_id <- 1:nrow(data2)
 
-excluded_ids <- c(41,51,67,68,69)
+excluded_ids <- c(41,51,67,68,69,72)
 data2 <- data2[!data2$participant_id %in% excluded_ids, ]
 
 data1 <- data1 %>% mutate(study = 1)
@@ -36,16 +36,11 @@ rec_lm <- lm(data=data, scale(REC) ~ scale(lmdi) + scale(l5_REC))
 lmdi_lrec_m <- lmer(data = data, scale(lmdi) ~ scale(l5_REC) + (1|study))
 
 tab_model(rec_lm)
-tab_model(ldi_m, file = "LDI_table.doc")
-tab_model(rec_m,file = "REC_table.doc")
+tab_model(ldi_m)
+tab_model(rec_m)
 tab_model(ldi_rs_m)
 tab_model(lmdi_lrec_m)
 
-performance::icc(rec_m)
-
-performance::r2_(rec_m)
-
-BIC(ldi_m)
 
 vars <- insight::get_variance(
   rec_m,
@@ -79,14 +74,14 @@ summary(lmdi_lrec_m)
 fig_ldi <- ggplot(data, aes(x=lmdi, y=LDI, group=study)) + 
   geom_point(aes(colour=factor(study)),show.legend = FALSE) + 
   geom_smooth(aes(colour=factor(study)), method="lm",show.legend = FALSE) + 
-  xlab("λ") + 
+  xlab(expression(lambda)) + 
   ylab("LDI") +
   scale_color_aaas(labels = c("Study 1", "Study 2")) + 
   theme_bw() + 
   labs(colour = "Study") +
   theme(
-    axis.text.x = element_text(size = 14),
-    axis.text.y = element_text(size = 14),
+    axis.text.x = element_text(size = 11),
+    axis.text.y = element_text(size = 11),
     axis.title.x = element_text(size = 18),
     axis.title.y = element_text(size = 18),
     legend.position = c(0.8, 0.15), 
@@ -103,14 +98,14 @@ fig_ldi
 fig_rec <- ggplot(data, aes(x=l5_REC, y=REC, group=study)) + 
   geom_point(aes(colour=factor(study)),show.legend = FALSE) + 
   geom_smooth(aes(colour=factor(study)), method="lm",show.legend = FALSE) + 
-  xlab("Δ") + 
+  xlab(expression(Delta)) + 
   ylab("REC") +
   scale_color_aaas(labels = c("Study 1", "Study 2")) + 
   theme_bw() + 
   labs(colour = "Study") + 
   theme(
-    axis.text.x = element_text(size = 14),
-    axis.text.y = element_text(size = 14),
+    axis.text.x = element_text(size = 11),
+    axis.text.y = element_text(size = 11),
     axis.title.x = element_text(size = 18),
     axis.title.y = element_text(size = 18),
     legend.position = c(0.8, 0.15), 
@@ -124,17 +119,17 @@ fig_rec <- ggplot(data, aes(x=l5_REC, y=REC, group=study)) +
 #dev.off()
 #pdf("ldi-rec-fig.pdf", width=5, height=5)
 # Figure to show new values are decorrelated
-fig_ldi_rec <- ggplot(data, aes(x=lmdi, y=l5_REC, group=study)) + 
+fig_ldi_rec <- ggplot(data, aes(x=l5_REC, y=lmdi, group=study)) + 
   geom_point(aes(colour=factor(study)),show.legend = FALSE) + 
   geom_smooth(aes(colour=factor(study)), method="lm",show.legend = FALSE) + 
-  xlab("λ") + 
-  ylab("Δ") +
+  xlab(expression(Delta)) + 
+  ylab(expression(lambda)) +
   scale_color_aaas(labels = c("Study 1", "Study 2")) + 
   theme_bw() + 
   labs(colour = "Study") + 
   theme(
-    axis.text.x = element_text(size = 14),
-    axis.text.y = element_text(size = 14),
+    axis.text.x = element_text(size = 11),
+    axis.text.y = element_text(size = 11),
     axis.title.x = element_text(size = 18),
     axis.title.y = element_text(size = 18),
     legend.position = c(0.8, 0.15), 
@@ -151,14 +146,14 @@ fig_ldi_rec
 fig_ldi_oldrec <- ggplot(data, aes(x=lmdi, y=REC, group=study)) + 
   geom_point(aes(colour=factor(study))) + 
   geom_smooth(aes(colour=factor(study)), method="lm") + 
-  xlab("λ") + 
+  xlab(expression(lambda)) + 
   ylab("REC") +
   scale_color_aaas(labels = c("Study 1", "Study 2")) + 
   theme_bw() + 
   labs(colour = "Study") + 
   theme(
-    axis.text.x = element_text(size = 14),
-    axis.text.y = element_text(size = 14),
+    axis.text.x = element_text(size = 11),
+    axis.text.y = element_text(size = 11),
     axis.title.x = element_text(size = 18),
     axis.title.y = element_text(size = 18),
     legend.position = c(0.8, 0.15), 
@@ -172,17 +167,17 @@ fig_ldi_oldrec <- ggplot(data, aes(x=lmdi, y=REC, group=study)) +
 
 fig_ldi_oldrec
 
-fig_oldldi_rec <- ggplot(data, aes(x=LDI, y=l5_REC, group=study)) + 
+fig_oldldi_rec <- ggplot(data, aes(x=l5_REC, y=LDI, group=study)) + 
   geom_point(aes(colour=factor(study)),show.legend = FALSE) + 
   geom_smooth(aes(colour=factor(study)), method="lm",show.legend = FALSE) + 
-  xlab("LDI") + 
-  ylab("Δ") +
+  xlab(expression(Delta)) + 
+  ylab("LDI") +
   scale_color_aaas(labels = c("Study 1", "Study 2")) + 
   theme_bw() + 
   labs(colour = "Study") + 
   theme(
-    axis.text.x = element_text(size = 14),
-    axis.text.y = element_text(size = 14),
+    axis.text.x = element_text(size = 11),
+    axis.text.y = element_text(size = 11),
     axis.title.x = element_text(size = 18),
     axis.title.y = element_text(size = 18),
     legend.position = c(0.8, 0.15), 
@@ -199,7 +194,7 @@ fig_oldldi_rec
 #pdf("fig.pdf", width=21, height=14)
 combined_fig <- ggarrange(fig_ldi, fig_rec, fig_ldi_rec, fig_oldldi_rec,
                           fig_ldi_oldrec, labels = c("A", "B", "C", "D", "E"),
-                          font.label = list(size = 24), ncol = 3, nrow = 2)
+                          font.label = list(size = 20), ncol = 3, nrow = 2)
 #dev.off()
 
 combined_fig
