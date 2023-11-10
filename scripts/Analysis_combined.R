@@ -14,14 +14,14 @@ data2 <- read_csv("scripts/data_L5_fMRI.csv")
 data1 <- mutate(data1, l5_REC = participant_l5_max - participant_l5_min)
 data1$participant_id <- 1:nrow(data1)
 
-excluded_ids <- c(1, 15, 17)
+excluded_ids <- c(1, 15, 17) # participant 16 also excluded in supplemental analysis
 data1 <- data1[!data1$participant_id %in% excluded_ids, ]
 
 
 data2 <- mutate(data2, l5_REC = participant_l5_max - participant_l5_min)
 data2$participant_id <- 1:nrow(data2)
 
-excluded_ids <- c(41,51,67,68,69)
+excluded_ids <- c(41,51,67,68,69) # participant 72 also excluded in supplemental analysis
 data2 <- data2[!data2$participant_id %in% excluded_ids, ]
 
 
@@ -30,12 +30,14 @@ data2 <- data2 %>% mutate(study = 2)
 data <- bind_rows(data1, data2)
 data <- mutate(data, lmdi = 1 - participant_auc_l5_scale)
 
+
+
 # MIXED EFFECTS MODELS TO TEST LDI AND REC ASSOCIATIONS
+# lmdi = lambda measure ; l5_REC = delta measure
 ldi_m <- lmer(data = data, scale(LDI) ~ scale(lmdi) + scale(l5_REC) + (1|study))
-ldi_rs_m <- lmer(data = data, LDI ~ lmdi + l5_REC + (1 + lmdi + l5_REC|study))
 rec_m <- lmer(data = data, scale(REC) ~ scale(lmdi) + scale(l5_REC) + (1|study))
-rec_lm <- lm(data=data, scale(REC) ~ scale(lmdi) + scale(l5_REC))
 lmdi_lrec_m <- lmer(data = data, scale(lmdi) ~ scale(l5_REC) + (1|study))
+
 
 tab_model(ldi_m)
 tab_model(rec_m)

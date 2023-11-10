@@ -155,23 +155,7 @@ for i in 1:num_participants # for each participant
         end
     end
     participant_barplot[i] = groupedbar(unique_lureBins, stacked_data,bar_position = :stack, bar_width=0.1, labels=["Old" "New" "Similar" "NaN"], xlabel="Lure Bin", ylabel="Count", title="Participant #$(string(i))", legend = :outertopright)
-
-    #=
-    stacked_pairs = zeros(Int64, 3,3)
-    for j in 1:length(truth[idx][cases_noNaN])
-        stacked_pairs[Int(truth[idx][cases_noNaN][j]), Int(decision[idx][cases_noNaN][j])] += 1
-    end
-
-    participant_pairplot[i] = heatmap(stacked_pairs', xlabel = "Truth", ylabel = "Decision", xticks = ([1:1:3;],["Old", "New", "Similar"]), yticks = ([1:1:3;],["Old", "New", "Similar"]))
-    =#
 end
-
-participant_plot[72]
-participant_barplot[72]
-
-# participant_barplot[15]
-participant_plot[15]
-# participant_pairplot[15]
 
 df = DataFrame(participant_auc_l5 = participant_auc_l5,
                 participant_auc_l5_scale = participant_auc_l5_scale,
@@ -182,81 +166,8 @@ df = DataFrame(participant_auc_l5 = participant_auc_l5,
 
 #CSV.write("data_L5_fMRI.csv", df)
 
-LDI_l5_plot = scatter(participant_auc_l5, LDI;
-                        legend = false,
-                        xlabel = "Area",
-                        ylabel = "LDI",
-                        xlim = (0,1),
-                        ylim = (-0.1,1),
-                        dpi=300)
-for i in 1:length(participant_auc_l5)
-    annotate!(LDI_l5_plot, participant_auc_l5[i], LDI[i] + 0.03, text(i, 8, :black))
-end
-
-REC_l5_plot = scatter(participant_auc_l5, REC[:];
-                        legend = false,
-                        xlabel = "Area",
-                        ylabel = "REC",
-                        xlim = (0,1),
-                        ylim = (-0.1,1),
-                        dpi=300)
-for i in 1:length(participant_auc_l5)
-    annotate!(REC_l5_plot, participant_auc_l5[i], REC[i] + 0.03, text(i, 8, :black))
-end
-
-LDI_l5_scale_plot = scatter(participant_auc_l5_scale, LDI[:];
-                             legend = false,
-                             xlabel = "Scaled Area",
-                             ylabel = "LDI",
-                             xlim = (0,1),
-                             ylim = (-0.1,1),
-                             dpi=300)
-for i in 1:length(participant_auc_l5_scale)
-    annotate!(LDI_l5_scale_plot, participant_auc_l5_scale[i], LDI[i] + 0.03, text(i, 8, :black))
-end
-
-REC_l5_scale_plot = scatter(participant_auc_l5_scale, REC[:];
-                             legend = false,
-                             xlabel = "Scaled Area",
-                             ylabel = "REC",
-                             xlim = (0,1),
-                             ylim = (-0.1,1),
-                             dpi=300)
-for i in 1:length(participant_auc_l5_scale)
-    annotate!(REC_l5_scale_plot, participant_auc_l5_scale[i], REC[i] + 0.03, text(i, 8, :black))
-end
-
-REC_max_plot = scatter(participant_l5_max, REC[:];
-                        legend = false,
-                        xlabel = "Curve Maximum",
-                        ylabel = "REC",
-                        xlim = (0,1),
-                        ylim = (-0.1,1),
-                        dpi=300)
-for i in 1:length(participant_l5_max)
-    annotate!(REC_max_plot, participant_l5_max[i], REC[i] + 0.03, text(i, 8, :black))
-end
-
-REC_scaled_plot = scatter(participant_l5_max .- participant_l5_min, REC[:];
-                            legend = false,
-                            xlabel = "Curve Maximum - Curve Minimum",
-                            ylabel = "REC",
-                            xlim = (0,1),
-                            ylim = (-0.1,1),
-                            dpi=300)
-for i in 1:length(participant_l5_max)
-    annotate!(REC_scaled_plot, participant_l5_max[i].-participant_l5_min[i], REC[i] + 0.03, text(i, 8, :black))
-end
-
 # Save all the figures
 #=
-savefig(LDI_l5_plot, "MDI_Figures_fMRI/LDI_l5_plot.png")
-savefig(LDI_l5_scale_plot, "MDI_Figures_fMRI/LDI_l5_scale_plot.png")
-savefig(REC_l5_plot, "MDI_Figures_fMRI/REC_l5_plot.png")
-savefig(REC_l5_scale_plot, "MDI_Figures_fMRI/REC_l5_scale_plot.png")
-savefig(REC_max_plot, "MDI_Figures_fMRI/REC_max_plot.png")
-savefig(REC_scaled_plot, "MDI_Figures_fMRI/REC_scaled_plot.png")
-
 
 for i in eachindex(participant_plot)
     savefig(participant_plot[i], "MDI_Figures_fMRI/L5_plots/participant_plot_$i.png")
@@ -266,15 +177,3 @@ for i in eachindex(participant_plot)
     savefig(participant_barplot[i], "MDI_Figures_fMRI/Bar_plots/participant_barplot_$i.png")
 end
 =#
-
-
-participant_plot[4]
-
-# participant_barplot[4]
-
-
-LDI_l5_scale_plot
-REC_scaled_plot
-
-participant_plot[41]
-participant_barplot[67]
