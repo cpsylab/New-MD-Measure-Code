@@ -103,11 +103,6 @@ for i in 1:num_participants # for each participant
 
 
     # Get max, calculate area between max line and l5 curve
-    # participant_l5_max[i] = maximum(logistic5(range(0, stop=maximum(lureBin), length=500), curve_fit_params[i,:]))
-    # participant_l5_min[i] = minimum(logistic5(range(0, stop=maximum(lureBin), length=500), curve_fit_params[i,:]))
-    # area_diff(x) = participant_l5_max[i] - logistic5(x, curve_fit_params[i,:])
-    # participant_auc_l5[i], = quadgk(area_diff, 0, maximum(lureBin))
-    # participant_auc_l5_scale[i] = participant_auc_l5[i]/(participant_l5_max[i]-participant_l5_min[i])
     participant_auc_l5[i], participant_auc_l5_scale[i], participant_l5_min[i], participant_l5_max[i] = get_aucs(curve_fit_params[i,:])
 
     lure_decisions = (decision[idx] .== "b") .& .!ismissing.(decision[idx])
