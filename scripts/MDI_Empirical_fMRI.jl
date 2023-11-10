@@ -170,10 +170,10 @@ df = DataFrame(participant_auc_l5 = participant_auc_l5,
 #=
 
 for i in eachindex(participant_plot)
-    savefig(participant_plot[i], "MDI_Figures_fMRI/L5_plots/participant_plot_$i.png")
+    savefig(participant_plot[i], "MDI_Figures_Wahlheim/L5_plots/participant_plot_$i.png")
 end
 
 for i in eachindex(participant_plot)
-    savefig(participant_barplot[i], "MDI_Figures_fMRI/Bar_plots/participant_barplot_$i.png")
+    savefig(participant_barplot[i], "MDI_Figures_Wahlheim/Bar_plots/participant_barplot_$i.png")
 end
 =#
